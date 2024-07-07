@@ -1,15 +1,9 @@
-import { useVideoPlayer, VideoView, VideoPlayerStatus } from 'expo-video';
+import { VideoView, VideoPlayerStatus } from 'expo-video';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Dimensions,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from 'react-native';
+import { Platform, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useScale } from './useScale';
 import { useInterval } from './useInterval';
+import { useVideoDownload } from './useVideoDownload';
 
 const videoSource =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
@@ -28,20 +22,23 @@ export default function App() {
     return duration !== undefined ? (position ?? 0) / duration : 0;
   };
 
-  const player = useVideoPlayer(videoSource, (player) => {
-    player.addListener('statusChange', (status) => {
-      setVideoStatus(status);
-      console.log(`video status = ${status}`);
-    });
-  });
+  const { localVideoURL, progress, player } = useVideoDownload(
+    videoSource,
+    (player) => {
+      player?.addListener('statusChange', (status) => {
+        setVideoStatus(status);
+        console.log(`video status = ${status}`);
+      });
+    },
+  );
 
   useEffect(() => {
-    if (player.playing) {
+    if (player?.playing) {
       setIsPlaying(true);
     } else {
       setIsPlaying(false);
     }
-  }, [player.playing]);
+  }, [player?.playing]);
 
   useEffect(() => {
     if (videoStatus === 'readyToPlay') {
@@ -52,7 +49,7 @@ export default function App() {
 
   useInterval(() => {
     setFractionComplete(
-      fractionCompleteFromPosition(player.currentTime, player.duration),
+      fractionCompleteFromPosition(player?.currentTime, player?.duration),
     );
   }, 1000);
 
@@ -71,7 +68,11 @@ export default function App() {
           contentPosition={{ dx: 0, dy: 0 }}
         />
       ) : (
-        <View style={styles.videoStyle} />
+        <View style={styles.videoStyle}>
+          <Text style={styles.progressText}>{`Progress: ${Math.floor(
+            100 * progress,
+          )}%`}</Text>
+        </View>
       )}
       <ProgressBar fractionComplete={fractionComplete} />
       <View style={styles.buttons}>
@@ -176,6 +177,11 @@ const useVideoStyles = () => {
     videoStyle: {
       width: vidWidth,
       height: vidHeight,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    progressText: {
+      fontSize: 30 * scale,
     },
     buttons: {
       flexDirection: 'row',
