@@ -1,12 +1,12 @@
-import { VideoView, VideoPlayerStatus } from 'expo-video';
+import { VideoView, VideoPlayerStatus, PlayerError } from 'expo-video';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { useScale } from './useScale';
 import { useInterval } from './useInterval';
 import { useVideoDownload } from './useVideoDownload';
 
 const videoSource =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+  'https://sample-videos.com/video321/mp4/480/big_buck_bunny_480p_1mb.mp4';
 
 export default function App() {
   const styles = useVideoStyles();
@@ -22,13 +22,24 @@ export default function App() {
     return duration !== undefined ? (position ?? 0) / duration : 0;
   };
 
-  const { localVideoURL, progress, player } = useVideoDownload(
+  const { downloadState, progress, player } = useVideoDownload(
     videoSource,
     (player) => {
-      player?.addListener('statusChange', (status) => {
-        setVideoStatus(status);
-        console.log(`video status = ${status}`);
-      });
+      player?.addListener(
+        'statusChange',
+        (
+          status: VideoPlayerStatus,
+          oldStatus: VideoPlayerStatus,
+          error: PlayerError,
+        ) => {
+          setVideoStatus(status);
+          if (error) {
+            console.error(`Error: ${JSON.stringify(error)}`);
+          } else {
+            console.log(`video status = ${status}, oldStatus = ${oldStatus}`);
+          }
+        },
+      );
     },
   );
 
@@ -55,7 +66,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      {videoStatus === 'readyToPlay' || Platform.OS === 'android' ? (
+      {downloadState === 'FINISHED' && player ? (
         <VideoView
           ref={ref}
           style={styles.videoStyle}
@@ -179,6 +190,7 @@ const useVideoStyles = () => {
       height: vidHeight,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor,
     },
     progressText: {
       fontSize: 30 * scale,

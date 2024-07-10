@@ -9,7 +9,7 @@ export function useVideoDownload(
   videoSource: string,
   setup?: (player: VideoPlayer) => void,
 ): {
-  localVideoURL: string | undefined;
+  downloadState: DownloadState;
   progress: number;
   player: VideoPlayer | undefined;
 } {
@@ -55,7 +55,7 @@ export function useVideoDownload(
 
   const player = useVideoPlayer(localVideoURL, setup);
   return {
-    localVideoURL,
+    downloadState,
     progress,
     player,
   };
