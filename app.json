@@ -1,41 +1,33 @@
 {
   "expo": {
-    "plugins": [
-      [
-        "@react-native-tvos/config-tv",
-        {
-          "androidTVBanner": "./assets/images/icon-400x240.png",
-          "appleTVImages": {
-            "icon": "./assets/images/icon-1280x768.png",
-            "iconSmall": "./assets/images/icon-400x240.png",
-            "iconSmall2x": "./assets/images/icon-800x480.png",
-            "topShelf": "./assets/images/icon-1920x720.png",
-            "topShelf2x": "./assets/images/icon-3840x1440.png",
-            "topShelfWide": "./assets/images/icon-2320x720.png",
-            "topShelfWide2x": "./assets/images/icon-4640x1440.png"
-          }
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "newArchEnabled": false
-          },
-          "android": {
-            "newArchEnabled": false
-          }
-        }
-      ],
-      "expo-video"
-    ],
-    "name": "VideoTest",
-    "slug": "VideoTest",
-    "android": {
-      "package": "com.douglowderexpo.VideoTest"
+    "name": "videotest",
+    "slug": "videotest",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "com.douglowderexpo.VideoTest"
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kkuhn.videotest"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.kkuhn.videotest"
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
